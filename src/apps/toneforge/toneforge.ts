@@ -1,7 +1,7 @@
 // toneforge.ts — Pure game-logic engine for Chinese tone training.
 // Zero DOM, zero side effects. Consumes pinyin.js and produces state.
 
-import * as P from './pinyin.js';
+import * as P from './pinyin.ts';
 
 // ── types ──────────────────────────────────────────────────────────
 

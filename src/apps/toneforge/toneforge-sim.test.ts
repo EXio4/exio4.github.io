@@ -16,7 +16,7 @@ import {
   type ToneForgeState,
   type Tier,
   type InitialGroup,
-} from './toneforge.js';
+} from './toneforge.ts';
 
 // ── helpers ────────────────────────────────────────────────────────
 
