@@ -33,6 +33,13 @@ const GROUPS: GroupDef[] = [
 
 const APPS: App[] = [
   {
+    slug: 'toneforge',
+    name: 'ToneForge',
+    description: 'Master the five Mandarin tones through interactive drills and exercises.',
+    emoji: '🎵',
+    group: 'chinese',
+  },
+  {
     slug: 'counter',
     name: 'Counter',
     description: 'A stateful counter with increment, decrement and reset.',

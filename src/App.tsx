@@ -5,6 +5,7 @@ import './App.css'
 // Lazy-load each micro-frontend app so it's only fetched when navigated to.
 const CounterApp = lazy(() => import('./apps/counter'))
 const MarkdownApp = lazy(() => import('./apps/markdown'))
+const ToneForgeApp = lazy(() => import('./apps/toneforge'))
 
 import Home from './pages/Home.tsx'
 
@@ -31,6 +32,7 @@ function AppShell() {
             <Route path="/" element={<Home />} />
             <Route path="/apps/counter/*" element={<CounterApp />} />
             <Route path="/apps/markdown/*" element={<MarkdownApp />} />
+            <Route path="/apps/toneforge/*" element={<ToneForgeApp />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
