@@ -173,9 +173,11 @@ export function SetupScreen({ onStart }: Props) {
         </div>
       </section>
 
-      <button className="tf-start-btn" onClick={handleStart}>
-        {t.startGame}
-      </button>
+      <div className="tf-start-sticky">
+        <button className="tf-start-btn" onClick={handleStart}>
+          {t.startGame}
+        </button>
+      </div>
     </div>
   )
 }
