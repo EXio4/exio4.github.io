@@ -159,9 +159,12 @@
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
   font: inherit;
+  touch-action: manipulation;
 
-  &:hover {
-    border-color: var(--accent-border);
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--accent-border);
+    }
   }
 
   &.is-active {
@@ -219,9 +222,12 @@
   font-size: 15px;
   cursor: pointer;
   transition: border-color 0.2s;
+  touch-action: manipulation;
 
-  &:hover {
-    border-color: var(--accent-border);
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--accent-border);
+    }
   }
 
   &.is-active {
@@ -255,9 +261,12 @@
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
   font: inherit;
+  touch-action: manipulation;
 
-  &:hover {
-    border-color: var(--accent-border);
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--accent-border);
+    }
   }
 
   &.is-active {
@@ -302,10 +311,13 @@
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, opacity 0.2s;
   font: inherit;
+  touch-action: manipulation;
 
-  &:hover:not(:disabled) {
-    border-color: var(--tone, var(--accent-border));
-    background: color-mix(in srgb, var(--tone, var(--accent)) 6%, var(--bg));
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      border-color: var(--tone, var(--accent-border));
+      background: color-mix(in srgb, var(--tone, var(--accent)) 6%, var(--bg));
+    }
   }
 
   &.is-active {
@@ -419,10 +431,13 @@
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
   margin-bottom: 36px;
+  touch-action: manipulation;
 
-  &:hover:not(:disabled) {
-    border-color: var(--accent);
-    box-shadow: var(--shadow);
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
   }
 
   &:active:not(:disabled) {
@@ -467,10 +482,13 @@
   background: var(--bg);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, transform 0.1s, opacity 0.3s;
+  touch-action: manipulation;
 
-  &:hover:not(:disabled) {
-    border-color: var(--tone, var(--accent-border));
-    background: color-mix(in srgb, var(--tone, var(--accent)) 8%, var(--bg));
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      border-color: var(--tone, var(--accent-border));
+      background: color-mix(in srgb, var(--tone, var(--accent)) 8%, var(--bg));
+    }
   }
 
   &:active:not(:disabled) {
