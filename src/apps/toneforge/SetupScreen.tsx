@@ -116,7 +116,7 @@ export function SetupScreen({ onStart }: Props) {
                 key={t.tone}
                 className={`tf-tone-chip${active ? ' is-active' : ''}`}
                 onClick={() => setTones(toggle(tones, t.tone))}
-                disabled={!active && tones.length <= 1}
+                disabled={active && tones.length <= 1}
                 style={{ '--tone': `var(--tone-${t.tone})` } as React.CSSProperties}
               >
                 <span className="tf-tone-chip-mark">{t.mark}</span>
