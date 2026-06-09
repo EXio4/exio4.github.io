@@ -1,0 +1,39 @@
+.app-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  background: var(--bg);
+
+  &:hover {
+    border-color: var(--accent-border);
+    box-shadow: var(--shadow);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.app-card-emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.app-card-name {
+  font-size: 18px;
+  margin: 0 0 6px;
+  color: var(--text-h);
+}
+
+.app-card-desc {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
