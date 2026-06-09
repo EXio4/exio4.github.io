@@ -21,31 +21,29 @@ const TONES = [
   { tone: 4, mark: 'ˋ', name: '4th', full: 'Falling', char: 'mà' },
 ]
 
-// Bopomofo lexicographical order
-const CONSONANT_GROUPS: { key: InitialGroup | ''; label: string; initials: string }[] = [
-  { key: '',           label: 'All',        initials: '' },
-  { key: 'labials',    label: 'Labials',    initials: 'b p m f' },
-  { key: 'alveolars',  label: 'Alveolars',  initials: 'd t n l' },
-  { key: 'velars',     label: 'Velars',     initials: 'g k h' },
-  { key: 'palatals',   label: 'Palatals',   initials: 'j q x' },
-  { key: 'retroflex',  label: 'Retroflex',  initials: 'zh ch sh r' },
-  { key: 'dentals',    label: 'Dentals',    initials: 'z c s' },
+const CONSONANT_GROUPS: { key: InitialGroup; label: string; initials: string }[] = [
+  { key: 'labials',   label: 'Labials',   initials: 'b p m f' },
+  { key: 'alveolars', label: 'Alveolars', initials: 'd t n l' },
+  { key: 'velars',    label: 'Velars',    initials: 'g k h' },
+  { key: 'palatals',  label: 'Palatals',  initials: 'j q x' },
+  { key: 'retroflex', label: 'Retroflex', initials: 'zh ch sh r' },
+  { key: 'dentals',   label: 'Dentals',   initials: 'z c s' },
 ]
 
-function toggle(arr: number[], val: number): number[] {
+function toggle<T>(arr: T[], val: T): T[] {
   if (arr.includes(val)) return arr.filter(v => v !== val)
   return [...arr, val]
 }
 
 export function SetupScreen({ onStart }: Props) {
   const [tier, setTier] = useState<Tier>('easy')
-  const [group, setGroup] = useState<InitialGroup | ''>('')
   const [rounds, setRounds] = useState(10)
+  const [groups, setGroups] = useState<InitialGroup[]>([])
   const [tones, setTones] = useState<number[]>([1, 2, 3, 4])
 
   const handleStart = () => {
     const config: ToneForgeConfig = { tier, roundsPerGame: rounds, tones }
-    if (group) config.initialGroup = group as InitialGroup
+    if (groups.length > 0) config.initialGroups = groups
     onStart(config)
   }
 
@@ -56,6 +54,21 @@ export function SetupScreen({ onStart }: Props) {
         Train your ear for Mandarin tones. Listen to a syllable and identify which
         of the four tones you heard.
       </p>
+
+      <section className="tf-setup-section">
+        <h2 className="tf-setup-label">Rounds: {rounds}</h2>
+        <div className="tf-rounds-row">
+          {ROUND_OPTIONS.map((n) => (
+            <button
+              key={n}
+              className={`tf-rounds-btn${rounds === n ? ' is-active' : ''}`}
+              onClick={() => setRounds(n)}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="tf-setup-section">
         <h2 className="tf-setup-label">Difficulty</h2>
@@ -77,31 +90,19 @@ export function SetupScreen({ onStart }: Props) {
       <section className="tf-setup-section">
         <h2 className="tf-setup-label">Consonants</h2>
         <div className="tf-consonant-grid">
-          {CONSONANT_GROUPS.map((g) => (
-            <button
-              key={g.key}
-              className={`tf-consonant-chip${group === g.key ? ' is-active' : ''}`}
-              onClick={() => setGroup(g.key)}
-            >
-              <span className="tf-consonant-name">{g.label}</span>
-              <span className="tf-consonant-initials">{g.initials}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="tf-setup-section">
-        <h2 className="tf-setup-label">Rounds: {rounds}</h2>
-        <div className="tf-rounds-row">
-          {ROUND_OPTIONS.map((n) => (
-            <button
-              key={n}
-              className={`tf-rounds-btn${rounds === n ? ' is-active' : ''}`}
-              onClick={() => setRounds(n)}
-            >
-              {n}
-            </button>
-          ))}
+          {CONSONANT_GROUPS.map((g) => {
+            const active = groups.includes(g.key)
+            return (
+              <button
+                key={g.key}
+                className={`tf-consonant-chip${active ? ' is-active' : ''}`}
+                onClick={() => setGroups(toggle(groups, g.key))}
+              >
+                <span className="tf-consonant-name">{g.label}</span>
+                <span className="tf-consonant-initials">{g.initials}</span>
+              </button>
+            )
+          })}
         </div>
       </section>
 

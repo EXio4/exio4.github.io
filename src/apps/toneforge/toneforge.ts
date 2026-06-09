@@ -24,6 +24,7 @@ export interface ToneForgeConfig {
   tier: Tier;
   targetSyllable?: string;               // base only, e.g. "ni" (Easy tier)
   initialGroup?: InitialGroup;           // limit pool to these initials
+  initialGroups?: InitialGroup[];        // combine multiple groups
   roundsPerGame?: number;                // default 10
   distractorsStrategy?: DistractorStrategy; // override tier default
   tones?: number[];                      // which tones to include (default [1,2,3,4])
@@ -142,6 +143,15 @@ function getPool(config: ToneForgeConfig): string[] {
       throw new Error(`Invalid target syllable: "${config.targetSyllable}"`);
     }
     return [config.targetSyllable];
+  }
+  if (config.initialGroups && config.initialGroups.length > 0) {
+    const bases = new Set<string>();
+    for (const group of config.initialGroups) {
+      for (const base of getBasesForGroup(group)) {
+        bases.add(base);
+      }
+    }
+    return [...bases];
   }
   if (config.initialGroup) {
     return getBasesForGroup(config.initialGroup);
