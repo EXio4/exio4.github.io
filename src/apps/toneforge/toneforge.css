@@ -52,6 +52,24 @@
   color: #fff;
 }
 
+/* ── Back button ─────────────────────────────────────────── */
+
+.tf-back-btn {
+  background: none;
+  border: none;
+  color: var(--tone-5);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-bottom: 8px;
+  align-self: flex-start;
+  transition: color 0.15s;
+}
+
+.tf-back-btn:hover {
+  color: var(--tone-1);
+}
+
 /* ── Setup ────────────────────────────────────────────────── */
 
 .tf-setup {

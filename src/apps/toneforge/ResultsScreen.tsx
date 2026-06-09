@@ -6,12 +6,13 @@ interface Props {
   config: ToneForgeConfig
   suggestion: Partial<ToneForgeConfig>
   onPlayAgain: (config?: Partial<ToneForgeConfig>) => void
+  onBack: () => void
 }
 
 const TONE_RESULT_KEYS = ['tone1Result', 'tone2Result', 'tone3Result', 'tone4Result'] as const
 const TONE_MARKS: Record<number, string> = { 1: 'ˉ', 2: 'ˊ', 3: 'ˇ', 4: 'ˋ' }
 
-export function ResultsScreen({ stats, onPlayAgain, suggestion }: Props) {
+export function ResultsScreen({ stats, onPlayAgain, suggestion, onBack }: Props) {
   const { t } = useT()
   const accuracy = stats.totalRounds > 0
     ? Math.round((stats.totalCorrect / stats.totalRounds) * 100)
@@ -28,6 +29,8 @@ export function ResultsScreen({ stats, onPlayAgain, suggestion }: Props) {
 
   return (
     <div className="tf-results">
+      <button className="tf-back-btn" onClick={onBack}>{t.back}</button>
+
       <h1 className="tf-results-title">{t.gameOver}</h1>
 
       {/* Score */}

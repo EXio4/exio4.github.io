@@ -9,6 +9,7 @@ interface Props {
   replayCount: number
   onAnswer: (index: number) => void
   onReplay: () => void
+  onBack: () => void
 }
 
 const TIER_MAX_REPLAYS: Record<string, number> = {
@@ -24,7 +25,7 @@ function replayLabel(t: { replay: string; replayCount: string }, max: number, us
   return t.replayCount.replace('{n}', String(left))
 }
 
-export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }: Props) {
+export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay, onBack }: Props) {
   const { t } = useT()
   const round = state.currentRound!
   const tier = state.config.tier
@@ -57,6 +58,8 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
 
   return (
     <div className="tf-game">
+      <button className="tf-back-btn" onClick={onBack}>{t.back}</button>
+
       {/* Progress */}
       <div className="tf-progress">
         <div className="tf-progress-bar" style={{ width: `${progressPct}%` }} />

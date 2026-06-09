@@ -39,6 +39,7 @@ export interface LocaleStrings {
   tone4Full: string;
 
   // GameScreen
+  back: string;
   round: string;
   playAudio: string;
   listen: string;
@@ -104,6 +105,7 @@ const en: LocaleStrings = {
 
   round: 'Round',
   playAudio: 'Play audio',
+  back: '← Back',
   listen: 'Listen',
   replay: 'Replay',
   replayCount: 'Replay ({n})',
@@ -165,6 +167,7 @@ const esAR: LocaleStrings = {
 
   round: 'Ronda',
   playAudio: 'Reproducir audio',
+  back: '← Volver',
   listen: 'Escuchá',
   replay: 'Repetir',
   replayCount: 'Repetir ({n})',

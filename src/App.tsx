@@ -9,9 +9,16 @@ const ToneForgeApp = lazy(() => import('./apps/toneforge'))
 
 import Home from './pages/Home.tsx'
 
+const APP_LABELS: Record<string, string> = {
+  '/apps/toneforge': 'ToneForge',
+  '/apps/counter': 'Counter',
+  '/apps/markdown': 'Markdown',
+}
+
 function AppShell() {
   const { pathname } = useLocation()
   const inApp = pathname !== '/'
+  const appLabel = APP_LABELS[pathname]
 
   return (
     <div className="shell">
@@ -19,10 +26,13 @@ function AppShell() {
         <Link to="/" className="shell-logo">
           exio4<span className="shell-logo-dot">.</span>
         </Link>
-        {inApp && (
-          <Link to="/" className="shell-back">
-            ← back
-          </Link>
+        {inApp && appLabel && (
+          <span className="shell-breadcrumb">
+            <span className="shell-breadcrumb-sep">/</span>
+            <Link to={pathname} className="shell-breadcrumb-link">
+              {appLabel}
+            </Link>
+          </span>
         )}
       </header>
 

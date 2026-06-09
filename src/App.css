@@ -10,10 +10,9 @@
 .shell-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 16px 32px;
   border-bottom: 1px solid var(--border);
-  gap: 16px;
+  gap: 6px;
 
   @media (max-width: 600px) {
     padding: 12px 16px;
@@ -40,6 +39,26 @@
   text-decoration: none;
 
   &:hover { text-decoration: underline; }
+}
+
+.shell-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.shell-breadcrumb-sep {
+  color: var(--text-m);
+  font-weight: 300;
+}
+
+.shell-breadcrumb-link {
+  color: var(--text-h);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover { color: var(--accent); }
 }
 
 .shell-content {

@@ -21,6 +21,7 @@ type Action =
   | { type: 'ANSWER'; choiceIndex: number }
   | { type: 'NEXT' }
   | { type: 'REPLAY' }
+  | { type: 'BACK' }
 
 interface UIState {
   engine: ToneForgeState
@@ -55,6 +56,12 @@ function reducer(state: UIState, action: Action): UIState {
       return nextRound(state)
     case 'REPLAY':
       return { ...state, replayCount: state.replayCount + 1 }
+    case 'BACK':
+      return {
+        engine: createGame({ tier: 'easy', roundsPerGame: 10 }),
+        feedback: null,
+        replayCount: 0,
+      }
   }
 }
 
@@ -94,6 +101,11 @@ export default function ToneForgeApp() {
     }
   }, [])
 
+  const handleBack = useCallback(() => {
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current)
+    dispatch({ type: 'BACK' })
+  }, [])
+
   const handlePlayAgain = useCallback((config?: Partial<ToneForgeConfig>) => {
     const next = config
       ? { tier: 'easy' as Tier, roundsPerGame: 10, ...config }
@@ -119,6 +131,7 @@ export default function ToneForgeApp() {
           config={state.engine.config}
           suggestion={suggestNextConfig(getStats(state.engine))}
           onPlayAgain={handlePlayAgain}
+          onBack={handleBack}
         />
       </LangProvider>
     )
@@ -134,6 +147,7 @@ export default function ToneForgeApp() {
           replayCount={state.replayCount}
           onAnswer={handleAnswer}
           onReplay={handleReplay}
+          onBack={handleBack}
         />
       </div>
     </LangProvider>
