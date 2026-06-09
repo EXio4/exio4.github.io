@@ -13,6 +13,7 @@ import {
 import { SetupScreen } from './SetupScreen.tsx'
 import { GameScreen } from './GameScreen.tsx'
 import { ResultsScreen } from './ResultsScreen.tsx'
+import { LangProvider } from './LangContext.tsx'
 import './toneforge.css'
 
 type Action =
@@ -103,30 +104,38 @@ export default function ToneForgeApp() {
   const audioUrl = state.engine.currentRound?.audioUrl
 
   if (state.engine.phase === 'idle') {
-    return <SetupScreen onStart={handleStart} />
+    return (
+      <LangProvider>
+        <SetupScreen onStart={handleStart} />
+      </LangProvider>
+    )
   }
 
   if (state.engine.phase === 'finished') {
     return (
-      <ResultsScreen
-        stats={getStats(state.engine)}
-        config={state.engine.config}
-        suggestion={suggestNextConfig(getStats(state.engine))}
-        onPlayAgain={handlePlayAgain}
-      />
+      <LangProvider>
+        <ResultsScreen
+          stats={getStats(state.engine)}
+          config={state.engine.config}
+          suggestion={suggestNextConfig(getStats(state.engine))}
+          onPlayAgain={handlePlayAgain}
+        />
+      </LangProvider>
     )
   }
 
   return (
-    <div className="tf-app">
-      {audioUrl && <audio ref={audioRef} src={audioUrl} preload="auto" />}
-      <GameScreen
-        state={state.engine}
-        feedback={state.feedback}
-        replayCount={state.replayCount}
-        onAnswer={handleAnswer}
-        onReplay={handleReplay}
-      />
-    </div>
+    <LangProvider>
+      <div className="tf-app">
+        {audioUrl && <audio ref={audioRef} src={audioUrl} preload="auto" />}
+        <GameScreen
+          state={state.engine}
+          feedback={state.feedback}
+          replayCount={state.replayCount}
+          onAnswer={handleAnswer}
+          onReplay={handleReplay}
+        />
+      </div>
+    </LangProvider>
   )
 }

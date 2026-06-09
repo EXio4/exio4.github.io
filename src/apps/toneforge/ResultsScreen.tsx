@@ -1,4 +1,5 @@
 import type { ToneStats, ToneForgeConfig } from './toneforge.ts'
+import { useT } from './LangContext.tsx'
 
 interface Props {
   stats: ToneStats
@@ -7,21 +8,18 @@ interface Props {
   onPlayAgain: (config?: Partial<ToneForgeConfig>) => void
 }
 
-const TONE_LABELS: Record<number, { name: string; mark: string }> = {
-  1: { name: '1st (level)', mark: 'ˉ' },
-  2: { name: '2nd (rising)', mark: 'ˊ' },
-  3: { name: '3rd (dip)', mark: 'ˇ' },
-  4: { name: '4th (falling)', mark: 'ˋ' },
-}
+const TONE_RESULT_KEYS = ['tone1Result', 'tone2Result', 'tone3Result', 'tone4Result'] as const
+const TONE_MARKS: Record<number, string> = { 1: 'ˉ', 2: 'ˊ', 3: 'ˇ', 4: 'ˋ' }
 
 export function ResultsScreen({ stats, onPlayAgain, suggestion }: Props) {
+  const { t } = useT()
   const accuracy = stats.totalRounds > 0
     ? Math.round((stats.totalCorrect / stats.totalRounds) * 100)
     : 0
 
   const tones = [1, 2, 3, 4]
   const weakestTone = tones
-    .filter((t) => stats.byTone[t])
+    .filter((tone) => stats.byTone[tone])
     .sort((a, b) => {
       const aa = stats.byTone[a]
       const bb = stats.byTone[b]
@@ -30,7 +28,7 @@ export function ResultsScreen({ stats, onPlayAgain, suggestion }: Props) {
 
   return (
     <div className="tf-results">
-      <h1 className="tf-results-title">Game Over</h1>
+      <h1 className="tf-results-title">{t.gameOver}</h1>
 
       {/* Score */}
       <div className="tf-results-score">
@@ -38,25 +36,26 @@ export function ResultsScreen({ stats, onPlayAgain, suggestion }: Props) {
           <span className="tf-score-num">{accuracy}%</span>
         </div>
         <p className="tf-score-detail">
-          {stats.totalCorrect} / {stats.totalRounds} correct
+          {t.correctCount.replace('{correct}', String(stats.totalCorrect)).replace('{total}', String(stats.totalRounds))}
         </p>
       </div>
 
       {/* Streak */}
       <div className="tf-streak">
-        Best streak: <strong>{stats.bestStreak}</strong>
+        {t.bestStreak} <strong>{stats.bestStreak}</strong>
       </div>
 
       {/* Per-tone accuracy */}
       <section className="tf-tone-bars">
-        <h2 className="tf-tone-bars-title">Accuracy by tone</h2>
+        <h2 className="tf-tone-bars-title">{t.accuracyByTone}</h2>
         {tones.map((tone) => {
           const d = stats.byTone[tone]
           const pct = d ? Math.round((d.correct / d.total) * 100) : null
+          const key = TONE_RESULT_KEYS[tone - 1]
           return (
             <div key={tone} className="tf-tone-bar-row">
               <span className="tf-tone-bar-label">
-                {TONE_LABELS[tone].mark} {TONE_LABELS[tone].name}
+                {TONE_MARKS[tone]} {t[key]}
               </span>
               <div className="tf-tone-bar-track">
                 <div
@@ -78,14 +77,14 @@ export function ResultsScreen({ stats, onPlayAgain, suggestion }: Props) {
       {/* Actions */}
       <div className="tf-results-actions">
         <button className="tf-start-btn" onClick={() => onPlayAgain()}>
-          Play Again
+          {t.playAgain}
         </button>
         {suggestion.tier && (
           <button
             className="tf-start-btn is-ghost"
             onClick={() => onPlayAgain(suggestion)}
           >
-            Practice Weak Spots
+            {t.practiceWeak}
           </button>
         )}
       </div>

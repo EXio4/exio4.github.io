@@ -1,33 +1,42 @@
 import { useState } from 'react'
 import type { ToneForgeConfig, Tier, InitialGroup } from './toneforge.ts'
+import { useT } from './LangContext.tsx'
+import { LangSwitcher } from './LangContext.tsx'
 
 interface Props {
   onStart: (config: ToneForgeConfig) => void
 }
 
-const TIERS: { key: Tier; label: string; desc: string; emoji: string }[] = [
-  { key: 'easy', label: 'Easy', desc: 'Same syllable, pick the tone', emoji: '🌱' },
-  { key: 'medium', label: 'Medium', desc: 'Mixed syllables, 3 replays', emoji: '🔥' },
-  { key: 'hard', label: 'Hard', desc: '6 options, 1 replay', emoji: '💎' },
-  { key: 'expert', label: 'Expert', desc: 'Type the answer, no hints', emoji: '👑' },
+const TIERS: { key: Tier }[] = [
+  { key: 'easy' },
+  { key: 'medium' },
+  { key: 'hard' },
+  { key: 'expert' },
 ]
+
+const TIER_EMOJI: Record<string, string> = {
+  easy: '🌱',
+  medium: '🔥',
+  hard: '💎',
+  expert: '👑',
+}
 
 const ROUND_OPTIONS = [5, 10, 15, 20]
 
 const TONES = [
-  { tone: 1, mark: 'ˉ', name: '1st', full: 'High level', char: 'mā' },
-  { tone: 2, mark: 'ˊ', name: '2nd', full: 'Rising', char: 'má' },
-  { tone: 3, mark: 'ˇ', name: '3rd', full: 'Dip-rise', char: 'mǎ' },
-  { tone: 4, mark: 'ˋ', name: '4th', full: 'Falling', char: 'mà' },
+  { tone: 1, mark: 'ˉ', char: 'mā' },
+  { tone: 2, mark: 'ˊ', char: 'má' },
+  { tone: 3, mark: 'ˇ', char: 'mǎ' },
+  { tone: 4, mark: 'ˋ', char: 'mà' },
 ]
 
-const CONSONANT_GROUPS: { key: InitialGroup; label: string; initials: string }[] = [
-  { key: 'labials',   label: 'Labials',   initials: 'b p m f' },
-  { key: 'alveolars', label: 'Alveolars', initials: 'd t n l' },
-  { key: 'velars',    label: 'Velars',    initials: 'g k h' },
-  { key: 'palatals',  label: 'Palatals',  initials: 'j q x' },
-  { key: 'retroflex', label: 'Retroflex', initials: 'zh ch sh r' },
-  { key: 'dentals',   label: 'Dentals',   initials: 'z c s' },
+const CONSONANT_GROUPS: { key: InitialGroup; initials: string }[] = [
+  { key: 'labials',   initials: 'b p m f' },
+  { key: 'alveolars', initials: 'd t n l' },
+  { key: 'velars',    initials: 'g k h' },
+  { key: 'palatals',  initials: 'j q x' },
+  { key: 'retroflex', initials: 'zh ch sh r' },
+  { key: 'dentals',   initials: 'z c s' },
 ]
 
 function toggle<T>(arr: T[], val: T): T[] {
@@ -36,6 +45,7 @@ function toggle<T>(arr: T[], val: T): T[] {
 }
 
 export function SetupScreen({ onStart }: Props) {
+  const { t } = useT()
   const [tier, setTier] = useState<Tier>('easy')
   const [rounds, setRounds] = useState(10)
   const [groups, setGroups] = useState<InitialGroup[]>([])
@@ -47,16 +57,50 @@ export function SetupScreen({ onStart }: Props) {
     onStart(config)
   }
 
+  const tierLabels: Record<string, string> = {
+    easy: t.tierEasy,
+    medium: t.tierMedium,
+    hard: t.tierHard,
+    expert: t.tierExpert,
+  }
+  const tierDescs: Record<string, string> = {
+    easy: t.tierEasyDesc,
+    medium: t.tierMediumDesc,
+    hard: t.tierHardDesc,
+    expert: t.tierExpertDesc,
+  }
+
+  const groupLabels: Record<string, string> = {
+    labials: t.groupLabials,
+    alveolars: t.groupAlveolars,
+    velars: t.groupVelars,
+    palatals: t.groupPalatals,
+    retroflex: t.groupRetroflex,
+    dentals: t.groupDentals,
+  }
+
+  const toneNames: Record<number, string> = {
+    1: t.tone1Name,
+    2: t.tone2Name,
+    3: t.tone3Name,
+    4: t.tone4Name,
+  }
+  const toneFulls: Record<number, string> = {
+    1: t.tone1Full,
+    2: t.tone2Full,
+    3: t.tone3Full,
+    4: t.tone4Full,
+  }
+
   return (
     <div className="tf-setup">
-      <h1 className="tf-setup-title">ToneForge</h1>
-      <p className="tf-setup-desc">
-        Train your ear for Mandarin tones. Listen to a syllable and identify which
-        of the four tones you heard.
-      </p>
+      <LangSwitcher />
+
+      <h1 className="tf-setup-title">{t.setupTitle}</h1>
+      <p className="tf-setup-desc">{t.setupDesc}</p>
 
       <section className="tf-setup-section">
-        <h2 className="tf-setup-label">Rounds: {rounds}</h2>
+        <h2 className="tf-setup-label">{t.rounds}: {rounds}</h2>
         <div className="tf-rounds-row">
           {ROUND_OPTIONS.map((n) => (
             <button
@@ -71,24 +115,24 @@ export function SetupScreen({ onStart }: Props) {
       </section>
 
       <section className="tf-setup-section">
-        <h2 className="tf-setup-label">Difficulty</h2>
+        <h2 className="tf-setup-label">{t.difficulty}</h2>
         <div className="tf-tier-grid">
-          {TIERS.map((t) => (
+          {TIERS.map((ti) => (
             <button
-              key={t.key}
-              className={`tf-tier-card${tier === t.key ? ' is-active' : ''}`}
-              onClick={() => setTier(t.key)}
+              key={ti.key}
+              className={`tf-tier-card${tier === ti.key ? ' is-active' : ''}`}
+              onClick={() => setTier(ti.key)}
             >
-              <span className="tf-tier-emoji">{t.emoji}</span>
-              <span className="tf-tier-name">{t.label}</span>
-              <span className="tf-tier-desc">{t.desc}</span>
+              <span className="tf-tier-emoji">{TIER_EMOJI[ti.key]}</span>
+              <span className="tf-tier-name">{tierLabels[ti.key]}</span>
+              <span className="tf-tier-desc">{tierDescs[ti.key]}</span>
             </button>
           ))}
         </div>
       </section>
 
       <section className="tf-setup-section">
-        <h2 className="tf-setup-label">Consonants</h2>
+        <h2 className="tf-setup-label">{t.consonants}</h2>
         <div className="tf-consonant-grid">
           {CONSONANT_GROUPS.map((g) => {
             const active = groups.includes(g.key)
@@ -98,7 +142,7 @@ export function SetupScreen({ onStart }: Props) {
                 className={`tf-consonant-chip${active ? ' is-active' : ''}`}
                 onClick={() => setGroups(toggle(groups, g.key))}
               >
-                <span className="tf-consonant-name">{g.label}</span>
+                <span className="tf-consonant-name">{groupLabels[g.key]}</span>
                 <span className="tf-consonant-initials">{g.initials}</span>
               </button>
             )
@@ -107,22 +151,22 @@ export function SetupScreen({ onStart }: Props) {
       </section>
 
       <section className="tf-setup-section">
-        <h2 className="tf-setup-label">Tones</h2>
+        <h2 className="tf-setup-label">{t.tones}</h2>
         <div className="tf-tone-chips">
-          {TONES.map((t) => {
-            const active = tones.includes(t.tone)
+          {TONES.map((to) => {
+            const active = tones.includes(to.tone)
             return (
               <button
-                key={t.tone}
+                key={to.tone}
                 className={`tf-tone-chip${active ? ' is-active' : ''}`}
-                onClick={() => setTones(toggle(tones, t.tone))}
+                onClick={() => setTones(toggle(tones, to.tone))}
                 disabled={active && tones.length <= 1}
-                style={{ '--tone': `var(--tone-${t.tone})` } as React.CSSProperties}
+                style={{ '--tone': `var(--tone-${to.tone})` } as React.CSSProperties}
               >
-                <span className="tf-tone-chip-mark">{t.mark}</span>
-                <span className="tf-tone-chip-name">{t.name}</span>
-                <span className="tf-tone-chip-desc">{t.full}</span>
-                <span className="tf-tone-chip-example">{t.char}</span>
+                <span className="tf-tone-chip-mark">{to.mark}</span>
+                <span className="tf-tone-chip-name">{toneNames[to.tone]}</span>
+                <span className="tf-tone-chip-desc">{toneFulls[to.tone]}</span>
+                <span className="tf-tone-chip-example">{to.char}</span>
               </button>
             )
           })}
@@ -130,7 +174,7 @@ export function SetupScreen({ onStart }: Props) {
       </section>
 
       <button className="tf-start-btn" onClick={handleStart}>
-        Start Game
+        {t.startGame}
       </button>
     </div>
   )

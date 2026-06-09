@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ToneForgeState, SyllableEntry } from './toneforge.ts'
 import { normalize } from './pinyin.ts'
+import { useT } from './LangContext.tsx'
 
 interface Props {
   state: ToneForgeState
@@ -17,13 +18,14 @@ const TIER_MAX_REPLAYS: Record<string, number> = {
   expert: 0,
 }
 
-function replayLabel(max: number, used: number): string {
-  if (max === Infinity) return 'Replay'
+function replayLabel(t: { replay: string; replayCount: string }, max: number, used: number): string {
+  if (max === Infinity) return t.replay
   const left = max - used
-  return `Replay (${left})`
+  return t.replayCount.replace('{n}', String(left))
 }
 
 export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }: Props) {
+  const { t } = useT()
   const round = state.currentRound!
   const tier = state.config.tier
   const isExpert = tier === 'expert'
@@ -43,7 +45,6 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
     if (expertSubmitted) return
     const norm = normalize(expertInput.trim())
     if (!norm || norm.tone === 0) return
-    // Find which option matches — expert has only 1 option, so we check against correct
     const isCorrect = norm.base === round.correct.base && norm.tone === round.correct.tone
     const idx = isCorrect ? 0 : -1
     setExpertSubmitted(true)
@@ -60,7 +61,7 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
       <div className="tf-progress">
         <div className="tf-progress-bar" style={{ width: `${progressPct}%` }} />
         <span className="tf-progress-text">
-          Round {state.roundIndex + 1} / {state.totalRounds}
+          {t.round} {state.roundIndex + 1} / {state.totalRounds}
         </span>
       </div>
 
@@ -69,11 +70,11 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
         className="tf-audio-btn"
         onClick={onReplay}
         disabled={!canReplay && replayCount > 0}
-        aria-label="Play audio"
+        aria-label={t.playAudio}
       >
         <span className="tf-audio-icon">🔊</span>
         <span className="tf-audio-label">
-          {replayCount === 0 ? 'Listen' : replayLabel(maxReplays, replayCount)}
+          {replayCount === 0 ? t.listen : replayLabel(t, maxReplays, replayCount)}
         </span>
       </button>
 
@@ -87,7 +88,7 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
             onChange={(e) => setExpertInput(e.target.value)}
             onKeyDown={handleExpertKeyDown}
             disabled={expertSubmitted || feedback !== null}
-            placeholder='Type pinyin + tone, e.g. "ni3" or "nǐ"'
+            placeholder={t.expertPlaceholder}
             autoFocus
           />
           <button
@@ -95,7 +96,7 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
             onClick={handleExpertSubmit}
             disabled={expertSubmitted || feedback !== null}
           >
-            Submit
+            {t.submit}
           </button>
         </div>
       ) : (
@@ -122,13 +123,14 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay }:
       {isExpert && feedback && (
         <div className={`tf-feedback${feedback.correct ? ' is-correct' : ' is-wrong'}`}>
           {feedback.correct ? (
-            <span>Correct!</span>
+            <span>{t.correct}</span>
           ) : (
             <span>
-              Wrong — the answer was{' '}
+              {t.wrongAnswer.split('{answer}')[0]}
               <strong className="tf-feedback-answer">
                 {round.correct.syllableTone}
               </strong>
+              {t.wrongAnswer.split('{answer}')[1] ?? ''}
             </span>
           )}
         </div>
