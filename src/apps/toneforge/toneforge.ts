@@ -131,7 +131,8 @@ const TIER_PRESETS: Record<Tier, TierPreset> = {
 };
 
 function getEnabledTones(config: ToneForgeConfig): number[] {
-  return config.tones ?? [1, 2, 3, 4];
+  const tones = config.tones ?? [1, 2, 3, 4];
+  return tones.length > 0 ? tones : [1, 2, 3, 4];
 }
 
 // ── pool filtering ─────────────────────────────────────────────────
@@ -275,6 +276,14 @@ export function createGame(config: ToneForgeConfig): ToneForgeState {
 
   if (config.targetSyllable && !P.isValidBase(config.targetSyllable)) {
     throw new Error(`Invalid targetSyllable: "${config.targetSyllable}"`);
+  }
+
+  if (config.tones && config.tones.length === 0) {
+    throw new Error('At least one tone must be enabled');
+  }
+
+  if (config.initialGroups && config.initialGroups.length === 0) {
+    throw new Error('initialGroups must not be empty if provided');
   }
 
   const state: ToneForgeState = {
