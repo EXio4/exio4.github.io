@@ -26,6 +26,7 @@ export interface ToneForgeConfig {
   initialGroup?: InitialGroup;           // limit pool to these initials
   roundsPerGame?: number;                // default 10
   distractorsStrategy?: DistractorStrategy; // override tier default
+  tones?: number[];                      // which tones to include (default [1,2,3,4])
 }
 
 export interface SyllableEntry {
@@ -128,6 +129,10 @@ const TIER_PRESETS: Record<Tier, TierPreset> = {
   expert:  { numOptions: 0, strategy: 'mixed',      maxReplays: 0,        sameBaseForAllOptions: false, typed: true  },
 };
 
+function getEnabledTones(config: ToneForgeConfig): number[] {
+  return config.tones ?? [1, 2, 3, 4];
+}
+
 // ── pool filtering ─────────────────────────────────────────────────
 
 function getPool(config: ToneForgeConfig): string[] {
@@ -148,12 +153,13 @@ function getPool(config: ToneForgeConfig): string[] {
 
 function generateOptions(
   correct: SyllableEntry,
-  tier: Tier,
+  config: ToneForgeConfig,
   strategy?: DistractorStrategy,
 ): SyllableEntry[] {
-  const preset = TIER_PRESETS[tier];
+  const preset = TIER_PRESETS[config.tier];
   const strat = strategy || preset.strategy;
   const count = preset.numOptions;
+  const enabledTones = getEnabledTones(config);
 
   if (preset.typed) return [correct]; // expert — no distractors
 
@@ -161,12 +167,14 @@ function generateOptions(
   if (strat === 'sameBase' || preset.sameBaseForAllOptions) {
     const variants = P.getToneVariants(correct.base);
     if (!variants) return [correct];
-    const opts = variants.map((v, i) => ({
-      base: correct.base,
-      tone: i + 1,
-      syllableTone: v.syllableTone,
-      fileUrl: v.fileUrl,
-    }));
+    const opts = variants
+      .map((v, i) => ({
+        base: correct.base,
+        tone: i + 1,
+        syllableTone: v.syllableTone,
+        fileUrl: v.fileUrl,
+      }))
+      .filter(o => enabledTones.includes(o.tone));
     return shuffle(opts);
   }
 
@@ -175,32 +183,37 @@ function generateOptions(
     sameBase: false,
   });
 
-  // if not enough, fill with random
-  if (distractors.length < count - 1) {
-    const needed = count - 1 - distractors.length;
-    const used = new Set(distractors.map(d => d.syllableTone));
+  // filter distractors to enabled tones
+  const filtered = distractors.filter(d => enabledTones.includes(d.tone));
+
+  // if not enough, fill with random (enabled tones only)
+  if (filtered.length < count - 1) {
+    const needed = count - 1 - filtered.length;
+    const used = new Set(filtered.map(d => d.syllableTone));
     used.add(correct.syllableTone);
-    for (let i = 0; i < needed * 10 && distractors.length < count - 1; i++) {
+    const enabled = new Set(enabledTones);
+    for (let i = 0; i < needed * 20 && filtered.length < count - 1; i++) {
       const r = P.getRandom();
-      if (!used.has(r.syllableTone)) {
+      if (!used.has(r.syllableTone) && enabled.has(r.tone)) {
         used.add(r.syllableTone);
-        distractors.push(r);
+        filtered.push(r);
       }
     }
   }
 
-  return shuffle([correct, ...distractors.slice(0, count - 1)]);
+  return shuffle([correct, ...filtered.slice(0, count - 1)]);
 }
 
 // ── round generation ───────────────────────────────────────────────
 
 function generateRound(state: ToneForgeState): ToneForgeRound {
   const pool = getPool(state.config);
+  const enabledTones = getEnabledTones(state.config);
 
   // pick correct answer — biased toward weak tones if we have history
-  const correct = pickCorrectAnswer(pool, state.stats);
+  const correct = pickCorrectAnswer(pool, state.stats, enabledTones);
 
-  const options = generateOptions(correct, state.config.tier, state.config.distractorsStrategy);
+  const options = generateOptions(correct, state.config, state.config.distractorsStrategy);
   const correctIndex = options.findIndex(o => o.syllableTone === correct.syllableTone);
 
   return {
@@ -211,11 +224,17 @@ function generateRound(state: ToneForgeState): ToneForgeRound {
   };
 }
 
-function pickCorrectAnswer(pool: string[], stats: ToneStats): SyllableEntry {
-  // 70% of the time: pick from weak tones (adaptive)
-  // 30% of the time: pick randomly (keep exposure broad)
+function pickCorrectAnswer(pool: string[], stats: ToneStats, enabledTones: number[]): SyllableEntry {
+  // 70% of the time: pick from weak tones (adaptive), filtered to enabled
+  // 30% of the time: pick randomly (keep exposure broad), filtered to enabled
+  const fallback = () => {
+    const base = pool[Math.floor(Math.random() * pool.length)];
+    const tone = enabledTones[Math.floor(Math.random() * enabledTones.length)];
+    return P.getByBaseAndTone(base, tone) || pickAny(pool, enabledTones);
+  };
+
   if (Math.random() < 0.7 && stats.totalRounds > 5) {
-    const weakTones = getWeakTones(stats);
+    const weakTones = getWeakTones(stats).filter(t => enabledTones.includes(t));
     if (weakTones.length > 0) {
       const tone = weakTones[Math.floor(Math.random() * Math.min(2, weakTones.length))];
       const base = pool[Math.floor(Math.random() * pool.length)];
@@ -225,9 +244,17 @@ function pickCorrectAnswer(pool: string[], stats: ToneStats): SyllableEntry {
     }
   }
 
-  const base = pool[Math.floor(Math.random() * pool.length)];
-  const tone = Math.floor(Math.random() * 4) + 1;
-  return P.getByBaseAndTone(base, tone) || P.getRandom();
+  return fallback();
+}
+
+function pickAny(pool: string[], enabledTones: number[]): SyllableEntry {
+  for (let i = 0; i < 20; i++) {
+    const base = pool[Math.floor(Math.random() * pool.length)];
+    const tone = enabledTones[Math.floor(Math.random() * enabledTones.length)];
+    const entry = P.getByBaseAndTone(base, tone);
+    if (entry) return entry;
+  }
+  return P.getRandom();
 }
 
 // ── state machine ──────────────────────────────────────────────────

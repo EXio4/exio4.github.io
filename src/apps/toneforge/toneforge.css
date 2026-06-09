@@ -156,6 +156,71 @@
   }
 }
 
+/* tone chips */
+
+.tf-tone-chips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tf-tone-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+  font: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: var(--tone, var(--accent-border));
+    background: color-mix(in srgb, var(--tone, var(--accent)) 6%, var(--bg));
+  }
+
+  &.is-active {
+    border-color: var(--tone, var(--accent));
+    background: color-mix(in srgb, var(--tone, var(--accent)) 10%, var(--bg));
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}
+
+.tf-tone-chip-mark {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--tone, var(--accent));
+  line-height: 1.1;
+}
+
+.tf-tone-chip-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tf-tone-chip-desc {
+  font-size: 11px;
+  color: var(--text);
+}
+
+.tf-tone-chip-example {
+  font-size: 14px;
+  color: var(--tone, var(--text));
+  margin-top: 2px;
+}
+
 .tf-start-btn {
   display: inline-block;
   padding: 14px 48px;

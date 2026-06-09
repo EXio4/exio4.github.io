@@ -26,15 +26,28 @@ const GROUPS: { key: InitialGroup | ''; label: string }[] = [
 
 const ROUND_OPTIONS = [5, 10, 15, 20]
 
+const TONES = [
+  { tone: 1, mark: 'ˉ', name: '1st', full: 'High level', char: 'mā' },
+  { tone: 2, mark: 'ˊ', name: '2nd', full: 'Rising', char: 'má' },
+  { tone: 3, mark: 'ˇ', name: '3rd', full: 'Dip-rise', char: 'mǎ' },
+  { tone: 4, mark: 'ˋ', name: '4th', full: 'Falling', char: 'mà' },
+]
+
+function toggle(arr: number[], val: number): number[] {
+  if (arr.includes(val)) return arr.filter(v => v !== val)
+  return [...arr, val]
+}
+
 export function SetupScreen({ onStart }: Props) {
   const [tier, setTier] = useState<Tier>('easy')
   const [group, setGroup] = useState<InitialGroup | ''>('')
   const [rounds, setRounds] = useState(10)
+  const [tones, setTones] = useState<number[]>([1, 2, 3, 4])
 
   const showGroup = tier === 'medium' || tier === 'hard'
 
   const handleStart = () => {
-    const config: ToneForgeConfig = { tier, roundsPerGame: rounds }
+    const config: ToneForgeConfig = { tier, roundsPerGame: rounds, tones }
     if (showGroup && group) config.initialGroup = group as InitialGroup
     onStart(config)
   }
@@ -91,6 +104,29 @@ export function SetupScreen({ onStart }: Props) {
               {n}
             </button>
           ))}
+        </div>
+      </section>
+
+      <section className="tf-setup-section">
+        <h2 className="tf-setup-label">Tones</h2>
+        <div className="tf-tone-chips">
+          {TONES.map((t) => {
+            const active = tones.includes(t.tone)
+            return (
+              <button
+                key={t.tone}
+                className={`tf-tone-chip${active ? ' is-active' : ''}`}
+                onClick={() => setTones(toggle(tones, t.tone))}
+                disabled={!active && tones.length <= 1}
+                style={{ '--tone': `var(--tone-${t.tone})` } as React.CSSProperties}
+              >
+                <span className="tf-tone-chip-mark">{t.mark}</span>
+                <span className="tf-tone-chip-name">{t.name}</span>
+                <span className="tf-tone-chip-desc">{t.full}</span>
+                <span className="tf-tone-chip-example">{t.char}</span>
+              </button>
+            )
+          })}
         </div>
       </section>
 
