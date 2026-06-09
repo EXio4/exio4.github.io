@@ -5,6 +5,7 @@ import data from './pinyin.json';
 export interface SyllableVariant {
   syllableTone: string;
   fileUrl: string;
+  tone: number;
 }
 
 export interface SyllableEntry {
