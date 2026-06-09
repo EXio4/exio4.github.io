@@ -1,0 +1,59 @@
+.counter-app {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.counter-title {
+  font-size: 36px;
+  margin: 0 0 8px;
+}
+
+.counter-desc {
+  color: var(--text);
+  margin-bottom: 48px;
+}
+
+.counter-display {
+  font-family: var(--mono);
+  font-size: 96px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-h);
+  margin-bottom: 40px;
+  transition: color 0.15s;
+}
+
+.counter-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+
+  button {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 28px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    color: var(--text-h);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      border-color: var(--accent-border);
+      box-shadow: var(--shadow);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.counter-reset {
+  color: var(--text) !important;
+  font-size: 14px !important;
+  padding: 10px 16px !important;
+}
