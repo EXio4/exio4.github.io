@@ -12,18 +12,6 @@ const TIERS: { key: Tier; label: string; desc: string; emoji: string }[] = [
   { key: 'expert', label: 'Expert', desc: 'Type the answer, no hints', emoji: '👑' },
 ]
 
-const GROUPS: { key: InitialGroup | ''; label: string }[] = [
-  { key: '', label: 'All initials' },
-  { key: 'labials', label: 'b p m f' },
-  { key: 'alveolars', label: 'd t n l' },
-  { key: 'velars', label: 'g k h' },
-  { key: 'palatals', label: 'j q x' },
-  { key: 'retroflex', label: 'zh ch sh r' },
-  { key: 'dentals', label: 'z c s' },
-  { key: 'retroflex_vs_dental', label: 'zh/ch/sh vs z/c/s' },
-  { key: 'aspirated_vs_unaspirated', label: 'Aspirated contrast' },
-]
-
 const ROUND_OPTIONS = [5, 10, 15, 20]
 
 const TONES = [
@@ -31,6 +19,17 @@ const TONES = [
   { tone: 2, mark: 'ˊ', name: '2nd', full: 'Rising', char: 'má' },
   { tone: 3, mark: 'ˇ', name: '3rd', full: 'Dip-rise', char: 'mǎ' },
   { tone: 4, mark: 'ˋ', name: '4th', full: 'Falling', char: 'mà' },
+]
+
+// Bopomofo lexicographical order
+const CONSONANT_GROUPS: { key: InitialGroup | ''; label: string; initials: string }[] = [
+  { key: '',           label: 'All',        initials: '' },
+  { key: 'labials',    label: 'Labials',    initials: 'b p m f' },
+  { key: 'alveolars',  label: 'Alveolars',  initials: 'd t n l' },
+  { key: 'velars',     label: 'Velars',     initials: 'g k h' },
+  { key: 'palatals',   label: 'Palatals',   initials: 'j q x' },
+  { key: 'retroflex',  label: 'Retroflex',  initials: 'zh ch sh r' },
+  { key: 'dentals',    label: 'Dentals',    initials: 'z c s' },
 ]
 
 function toggle(arr: number[], val: number): number[] {
@@ -44,11 +43,9 @@ export function SetupScreen({ onStart }: Props) {
   const [rounds, setRounds] = useState(10)
   const [tones, setTones] = useState<number[]>([1, 2, 3, 4])
 
-  const showGroup = tier === 'medium' || tier === 'hard'
-
   const handleStart = () => {
     const config: ToneForgeConfig = { tier, roundsPerGame: rounds, tones }
-    if (showGroup && group) config.initialGroup = group as InitialGroup
+    if (group) config.initialGroup = group as InitialGroup
     onStart(config)
   }
 
@@ -77,20 +74,21 @@ export function SetupScreen({ onStart }: Props) {
         </div>
       </section>
 
-      {showGroup && (
-        <section className="tf-setup-section">
-          <h2 className="tf-setup-label">Focus initials</h2>
-          <select
-            className="tf-select"
-            value={group}
-            onChange={(e) => setGroup(e.target.value as InitialGroup | '')}
-          >
-            {GROUPS.map((g) => (
-              <option key={g.key} value={g.key}>{g.label}</option>
-            ))}
-          </select>
-        </section>
-      )}
+      <section className="tf-setup-section">
+        <h2 className="tf-setup-label">Consonants</h2>
+        <div className="tf-consonant-grid">
+          {CONSONANT_GROUPS.map((g) => (
+            <button
+              key={g.key}
+              className={`tf-consonant-chip${group === g.key ? ' is-active' : ''}`}
+              onClick={() => setGroup(g.key)}
+            >
+              <span className="tf-consonant-name">{g.label}</span>
+              <span className="tf-consonant-initials">{g.initials}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="tf-setup-section">
         <h2 className="tf-setup-label">Rounds: {rounds}</h2>

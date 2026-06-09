@@ -156,6 +156,53 @@
   }
 }
 
+/* consonant chips */
+
+.tf-consonant-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tf-consonant-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font: inherit;
+
+  &:hover {
+    border-color: var(--accent-border);
+  }
+
+  &.is-active {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+}
+
+.tf-consonant-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tf-consonant-initials {
+  font-size: 12px;
+  color: var(--text);
+  font-family: var(--mono);
+}
+
 /* tone chips */
 
 .tf-tone-chips {
