@@ -53,6 +53,7 @@ function reducer(state: UIState, action: Action): UIState {
       }
     }
     case 'NEXT':
+      if (state.engine.phase !== 'answered') return state
       return nextRound(state)
     case 'REPLAY':
       return { ...state, replayCount: state.replayCount + 1 }
@@ -76,6 +77,7 @@ export default function ToneForgeApp() {
   const feedbackTimer = useRef<ReturnType<typeof setTimeout>>(null)
 
   const handleStart = useCallback((config: ToneForgeConfig) => {
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current)
     dispatch({ type: 'START', config })
     setTimeout(() => {
       audioRef.current?.play()
