@@ -29,7 +29,9 @@ export function ResultsScreen({ stats, onPlayAgain, suggestion, onBack }: Props)
 
   return (
     <div className="tf-results">
-      <button className="tf-back-btn" onClick={onBack}>{t.back}</button>
+      <div className="tf-topbar">
+        <button className="tf-back-chevron" onClick={onBack} aria-label={t.back}>←</button>
+      </div>
 
       <h1 className="tf-results-title">{t.gameOver}</h1>
 

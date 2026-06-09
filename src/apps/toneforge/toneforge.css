@@ -52,22 +52,32 @@
   color: #fff;
 }
 
-/* ── Back button ─────────────────────────────────────────── */
+/* ── Back chevron + topbar ────────────────────────────────── */
 
-.tf-back-btn {
+.tf-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tf-back-chevron {
   background: none;
   border: none;
   color: var(--tone-5);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  padding: 4px 0;
-  margin-bottom: 8px;
-  align-self: flex-start;
-  transition: color 0.15s;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
 }
 
-.tf-back-btn:hover {
-  color: var(--tone-1);
+.tf-back-chevron:hover {
+  background: color-mix(in srgb, var(--tone-5) 15%, transparent);
+  color: var(--text-h);
 }
 
 /* ── Setup ────────────────────────────────────────────────── */
@@ -353,7 +363,6 @@
 /* progress */
 
 .tf-progress {
-  position: relative;
   height: 4px;
   background: var(--border);
   border-radius: 2px;
@@ -369,9 +378,6 @@
 }
 
 .tf-progress-text {
-  position: absolute;
-  right: 0;
-  top: -22px;
   font-size: 13px;
   color: var(--text);
 }

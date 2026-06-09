@@ -58,14 +58,15 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay, o
 
   return (
     <div className="tf-game">
-      <button className="tf-back-btn" onClick={onBack}>{t.back}</button>
-
-      {/* Progress */}
-      <div className="tf-progress">
-        <div className="tf-progress-bar" style={{ width: `${progressPct}%` }} />
+      {/* Progress + back */}
+      <div className="tf-topbar">
+        <button className="tf-back-chevron" onClick={onBack} aria-label={t.back}>←</button>
         <span className="tf-progress-text">
           {t.round} {state.roundIndex + 1} / {state.totalRounds}
         </span>
+      </div>
+      <div className="tf-progress">
+        <div className="tf-progress-bar" style={{ width: `${progressPct}%` }} />
       </div>
 
       {/* Audio button */}
