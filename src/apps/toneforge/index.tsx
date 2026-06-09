@@ -1,37 +1,132 @@
+import { useReducer, useCallback, useRef } from 'react'
+import {
+  createGame,
+  startRound,
+  submitAnswer,
+  advanceRound,
+  getStats,
+  suggestNextConfig,
+  type ToneForgeState,
+  type ToneForgeConfig,
+  type Tier,
+} from './toneforge.ts'
+import { SetupScreen } from './SetupScreen.tsx'
+import { GameScreen } from './GameScreen.tsx'
+import { ResultsScreen } from './ResultsScreen.tsx'
 import './toneforge.css'
 
+type Action =
+  | { type: 'START'; config: ToneForgeConfig }
+  | { type: 'ANSWER'; choiceIndex: number }
+  | { type: 'NEXT' }
+  | { type: 'REPLAY' }
+
+interface UIState {
+  engine: ToneForgeState
+  feedback: { correct: boolean; chosenIndex: number } | null
+  replayCount: number
+}
+
+function nextRound(state: UIState): UIState {
+  const engine = advanceRound(state.engine)
+  return { engine, feedback: null, replayCount: 0 }
+}
+
+function reducer(state: UIState, action: Action): UIState {
+  switch (action.type) {
+    case 'START': {
+      const engine = startRound(createGame(action.config))
+      return { engine, feedback: null, replayCount: 0 }
+    }
+    case 'ANSWER': {
+      if (state.engine.phase !== 'listening' || !state.engine.currentRound) return state
+      const result = submitAnswer(state.engine, action.choiceIndex)
+      return {
+        ...state,
+        engine: result.state,
+        feedback: {
+          correct: result.correct,
+          chosenIndex: action.choiceIndex,
+        },
+      }
+    }
+    case 'NEXT':
+      return nextRound(state)
+    case 'REPLAY':
+      return { ...state, replayCount: state.replayCount + 1 }
+  }
+}
+
 export default function ToneForgeApp() {
+  const [state, dispatch] = useReducer(reducer, null, () => ({
+    engine: createGame({ tier: 'easy', roundsPerGame: 10 }),
+    feedback: null,
+    replayCount: 0,
+  }))
+
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout>>(null)
+
+  const handleStart = useCallback((config: ToneForgeConfig) => {
+    dispatch({ type: 'START', config })
+    setTimeout(() => {
+      audioRef.current?.play()
+    }, 200)
+  }, [])
+
+  const handleAnswer = useCallback((choiceIndex: number) => {
+    dispatch({ type: 'ANSWER', choiceIndex })
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current)
+    feedbackTimer.current = setTimeout(() => {
+      dispatch({ type: 'NEXT' })
+      setTimeout(() => {
+        audioRef.current?.play()
+      }, 150)
+    }, 1200)
+  }, [])
+
+  const handleReplay = useCallback(() => {
+    dispatch({ type: 'REPLAY' })
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play()
+    }
+  }, [])
+
+  const handlePlayAgain = useCallback((config?: Partial<ToneForgeConfig>) => {
+    const next = config
+      ? { tier: 'easy' as Tier, roundsPerGame: 10, ...config }
+      : { tier: 'easy' as Tier, roundsPerGame: 10 }
+    handleStart(next)
+  }, [handleStart])
+
+  const audioUrl = state.engine.currentRound?.audioUrl
+
+  if (state.engine.phase === 'idle') {
+    return <SetupScreen onStart={handleStart} />
+  }
+
+  if (state.engine.phase === 'finished') {
+    return (
+      <ResultsScreen
+        stats={getStats(state.engine)}
+        config={state.engine.config}
+        suggestion={suggestNextConfig(getStats(state.engine))}
+        onPlayAgain={handlePlayAgain}
+      />
+    )
+  }
+
   return (
     <div className="tf-app">
-      <h1 className="tf-title">ToneForge</h1>
-      <p className="tf-desc">
-        A Mandarin Chinese tone training tool. Practice distinguishing and producing
-        the four tones plus the neutral tone.
-      </p>
-
-      <div className="tf-placeholder">
-        <span className="tf-placeholder-emoji">🎵</span>
-        <p className="tf-placeholder-text">
-          Tone training exercises coming soon.
-        </p>
-      </div>
-
-      <div className="tf-tone-grid">
-        {[
-          { tone: '1st', name: 'High Level', mark: 'ˉ', pinyin: 'mā', char: '妈' },
-          { tone: '2nd', name: 'Rising', mark: 'ˊ', pinyin: 'má', char: '麻' },
-          { tone: '3rd', name: 'Dip-Rise', mark: 'ˇ', pinyin: 'mǎ', char: '马' },
-          { tone: '4th', name: 'Falling', mark: 'ˋ', pinyin: 'mà', char: '骂' },
-          { tone: '5th', name: 'Neutral', mark: '·', pinyin: 'ma', char: '吗' },
-        ].map((t) => (
-          <div key={t.tone} className="tf-tone-card">
-            <div className="tf-tone-mark">{t.mark}</div>
-            <div className="tf-tone-name">{t.name}</div>
-            <div className="tf-tone-pinyin">{t.pinyin}</div>
-            <div className="tf-tone-char">{t.char}</div>
-          </div>
-        ))}
-      </div>
+      {audioUrl && <audio ref={audioRef} src={audioUrl} preload="auto" />}
+      <GameScreen
+        state={state.engine}
+        feedback={state.feedback}
+        replayCount={state.replayCount}
+        onAnswer={handleAnswer}
+        onReplay={handleReplay}
+      />
     </div>
   )
 }
