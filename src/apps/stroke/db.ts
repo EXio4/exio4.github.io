@@ -101,28 +101,36 @@ export async function getAttemptsForCharacter(
     .sort((a, b) => b.startedAt.localeCompare(a.startedAt))
 }
 
-function getStore(
-  db: IDBDatabase,
-  storeName: StoreName,
-  mode: IDBTransactionMode,
-): IDBObjectStore {
-  return db.transaction(storeName, mode).objectStore(storeName)
-}
-
 function getRecord<T>(db: IDBDatabase, storeName: StoreName, key: IDBValidKey): Promise<T | undefined> {
-  const request = getStore(db, storeName, 'readonly').get(key)
-  return requestToPromise<T | undefined>(request)
+  const transaction = db.transaction(storeName, 'readonly')
+  const request = transaction.objectStore(storeName).get(key)
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+    transaction.onerror = () => reject(transaction.error)
+    transaction.onabort = () => reject(transaction.error)
+  })
 }
 
 function getAllRecords<T>(db: IDBDatabase, storeName: StoreName): Promise<T[]> {
-  const request = getStore(db, storeName, 'readonly').getAll()
-  return requestToPromise<T[]>(request)
+  const transaction = db.transaction(storeName, 'readonly')
+  const request = transaction.objectStore(storeName).getAll()
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+    transaction.onerror = () => reject(transaction.error)
+    transaction.onabort = () => reject(transaction.error)
+  })
 }
 
 function putRecord<T>(db: IDBDatabase, storeName: StoreName, value: T): Promise<void> {
   const transaction = db.transaction(storeName, 'readwrite')
   transaction.objectStore(storeName).put(value)
-  return transactionToPromise(transaction)
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve()
+    transaction.onerror = () => reject(transaction.error)
+    transaction.onabort = () => reject(transaction.error)
+  })
 }
 
 function addRecord<T>(db: IDBDatabase, storeName: StoreName, value: T): Promise<IDBValidKey> {
@@ -131,19 +139,6 @@ function addRecord<T>(db: IDBDatabase, storeName: StoreName, value: T): Promise<
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
-  })
-}
-
-function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
-  })
-}
-
-function transactionToPromise(transaction: IDBTransaction): Promise<void> {
-  return new Promise((resolve, reject) => {
-    transaction.oncomplete = () => resolve()
     transaction.onerror = () => reject(transaction.error)
     transaction.onabort = () => reject(transaction.error)
   })
