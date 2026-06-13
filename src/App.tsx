@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
+import ShellLoading from './components/ShellLoading.tsx'
 
 // Lazy-load each micro-frontend app so it's only fetched when navigated to.
 const CounterApp = lazy(() => import('./apps/counter'))
@@ -39,7 +40,7 @@ function AppShell() {
       </header>
 
       <main className="shell-content">
-        <Suspense fallback={<div className="shell-loading">Loading…</div>}>
+        <Suspense fallback={<ShellLoading />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/apps/counter/*" element={<CounterApp />} />
