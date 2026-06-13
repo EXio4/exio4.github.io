@@ -12,7 +12,7 @@ export const COURSES: StrokeCourse[] = [
     id: 'foundations',
     name: 'Foundations',
     description: 'Core pronouns, family terms, and everyday direction words.',
-    deckIds: ['pronouns', 'family', 'colors-directions'],
+    deckIds: ['pronouns', 'family', 'colors-directions', 'adverbs'],
   },
   {
     id: 'daily-life',
@@ -57,6 +57,13 @@ export const DECKS: StrokeDeck[] = [
     name: 'Colors & Directions',
     description: 'Basic color adjectives and spatial orientation words.',
     characterIds: ['白', '黑', '红', '黄', '蓝', '绿', '上', '下', '左', '右'],
+  },
+  {
+    id: 'adverbs',
+    courseId: 'foundations',
+    name: 'Adverbs & Particles',
+    description: 'High-frequency adverbs and grammatical particles for sentence building.',
+    characterIds: ['很', '也', '都', '不'],
   },
   {
     id: 'action-verbs',
@@ -510,6 +517,44 @@ const CHARACTER_DETAILS: Omit<StrokeCharacter, 'strokeCount'>[] = [
     meaning: 'right',
     radical: '口',
     example: '右手 - right hand',
+  },
+
+  /* Adverbs & Particles */
+  {
+    character: '很',
+    deckIds: ['adverbs'],
+    pinyin: 'hen3',
+    pinyinMarked: 'hěn',
+    meaning: 'very',
+    radical: '彳',
+    example: '很好 - very good',
+  },
+  {
+    character: '也',
+    deckIds: ['adverbs'],
+    pinyin: 'ye3',
+    pinyinMarked: 'yě',
+    meaning: 'also',
+    radical: '乙',
+    example: '我也是 - me too',
+  },
+  {
+    character: '都',
+    deckIds: ['adverbs'],
+    pinyin: 'dou1',
+    pinyinMarked: 'dōu',
+    meaning: 'all; both',
+    radical: '阝',
+    example: '大家都好 - everyone is fine',
+  },
+  {
+    character: '不',
+    deckIds: ['adverbs'],
+    pinyin: 'bu4',
+    pinyinMarked: 'bù',
+    meaning: 'not',
+    radical: '一',
+    example: '不是 - is not',
   },
 
   /* Action Verbs */

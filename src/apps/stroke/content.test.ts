@@ -10,7 +10,7 @@ import {
 import { getHanziData, getStrokeCount } from './hanziData.ts'
 
 describe('Stroke content', () => {
-  it('ships three courses with eight decks', () => {
+  it('ships three courses with nine decks', () => {
     expect(COURSES).toHaveLength(3)
     expect(COURSES[0]).toMatchObject({ id: 'essentials', name: 'Essentials' })
     expect(COURSES[1]).toMatchObject({ id: 'foundations', name: 'Foundations' })
@@ -22,6 +22,7 @@ describe('Stroke content', () => {
       'pronouns',
       'family',
       'colors-directions',
+      'adverbs',
       'action-verbs',
       'food-drink',
       'nature-weather',
@@ -55,8 +56,8 @@ describe('Stroke content', () => {
   it('keeps every character unique and connected to local HanziWriter data', () => {
     const unique = new Set(CHARACTERS.map((entry) => entry.character))
 
-    expect(CHARACTERS).toHaveLength(77)
-    expect(unique.size).toBe(77)
+    expect(CHARACTERS).toHaveLength(81)
+    expect(unique.size).toBe(81)
 
     for (const entry of CHARACTERS) {
       const data = getHanziData(entry.character)
