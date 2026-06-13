@@ -56,8 +56,8 @@ describe('Stroke content', () => {
   it('keeps every character unique and connected to local HanziWriter data', () => {
     const unique = new Set(CHARACTERS.map((entry) => entry.character))
 
-    expect(CHARACTERS).toHaveLength(81)
-    expect(unique.size).toBe(81)
+    expect(CHARACTERS).toHaveLength(84)
+    expect(unique.size).toBe(84)
 
     for (const entry of CHARACTERS) {
       const data = getHanziData(entry.character)

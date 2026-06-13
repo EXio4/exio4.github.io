@@ -49,6 +49,9 @@ import hen from 'hanzi-writer-data/很.json'
 import ye_ye from 'hanzi-writer-data/也.json'
 import dou from 'hanzi-writer-data/都.json'
 import bu from 'hanzi-writer-data/不.json'
+import ma_ma from 'hanzi-writer-data/吗.json'
+import ne from 'hanzi-writer-data/呢.json'
+import ba_pa from 'hanzi-writer-data/吧.json'
 import chi from 'hanzi-writer-data/吃.json'
 import he from 'hanzi-writer-data/喝.json'
 import zou from 'hanzi-writer-data/走.json'
@@ -133,6 +136,9 @@ export const HANZI_DATA: Record<string, HanziWriterCharacterData> = {
   也: ye_ye,
   都: dou,
   不: bu,
+  吗: ma_ma,
+  呢: ne,
+  吧: ba_pa,
   吃: chi,
   喝: he,
   走: zou,

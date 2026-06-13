@@ -63,7 +63,7 @@ export const DECKS: StrokeDeck[] = [
     courseId: 'foundations',
     name: 'Adverbs & Particles',
     description: 'High-frequency adverbs and grammatical particles for sentence building.',
-    characterIds: ['很', '也', '都', '不'],
+    characterIds: ['很', '也', '都', '不', '吗', '呢', '吧'],
   },
   {
     id: 'action-verbs',
@@ -555,6 +555,33 @@ const CHARACTER_DETAILS: Omit<StrokeCharacter, 'strokeCount'>[] = [
     meaning: 'not',
     radical: '一',
     example: '不是 - is not',
+  },
+  {
+    character: '吗',
+    deckIds: ['adverbs'],
+    pinyin: 'ma5',
+    pinyinMarked: 'ma',
+    meaning: 'question particle',
+    radical: '口',
+    example: '好吗？- OK?',
+  },
+  {
+    character: '呢',
+    deckIds: ['adverbs'],
+    pinyin: 'ne5',
+    pinyinMarked: 'ne',
+    meaning: 'question particle (contextual)',
+    radical: '口',
+    example: '你呢？- And you?',
+  },
+  {
+    character: '吧',
+    deckIds: ['adverbs'],
+    pinyin: 'ba5',
+    pinyinMarked: 'ba',
+    meaning: 'suggestion particle',
+    radical: '口',
+    example: '走吧 - let\'s go',
   },
 
   /* Action Verbs */
