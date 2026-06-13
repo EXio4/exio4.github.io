@@ -1,7 +1,7 @@
 import type { CharacterProgress, StarRating } from './types.ts'
 
-const DEFAULT_EASE = 2.3
-const MAX_EASE = 2.8
+const DEFAULT_EASE = 2.0
+const MAX_EASE = 2.5
 const MIN_EASE = 1.3
 const WEAK_REVIEW_DELAY_MINUTES = 10
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -35,15 +35,15 @@ export function applyReviewResult(
   let dueAt = reviewedAt.toISOString()
 
   if (result.stars === 3) {
-    intervalDays = intervalDays === 0 ? 3 : Math.ceil(intervalDays * ease)
-    ease = clampEase(ease + 0.08)
+    intervalDays = intervalDays === 0 ? 2 : Math.ceil(intervalDays * ease)
+    ease = clampEase(ease + 0.05)
     dueAt = addDays(reviewedAt, intervalDays).toISOString()
   } else if (result.stars === 2) {
-    intervalDays = intervalDays === 0 ? 1 : Math.ceil(intervalDays * 1.4)
+    intervalDays = intervalDays === 0 ? 1 : Math.ceil(intervalDays * 1.2)
     dueAt = addDays(reviewedAt, intervalDays).toISOString()
   } else if (result.stars === 1) {
     intervalDays = 0
-    ease = clampEase(ease - 0.15)
+    ease = clampEase(ease - 0.10)
     lapses += 1
     dueAt = new Date(reviewedAt.getTime() + WEAK_REVIEW_DELAY_MINUTES * MINUTE_MS).toISOString()
   }

@@ -29,7 +29,7 @@ describe('Stroke SRS', () => {
       attempts: 0,
       dueAt: NOW,
       intervalDays: 0,
-      ease: 2.3,
+      ease: 2,
       lapses: 0,
     })
   })
@@ -42,9 +42,9 @@ describe('Stroke SRS', () => {
 
     expect(next.bestStars).toBe(3)
     expect(next.attempts).toBe(1)
-    expect(next.intervalDays).toBe(3)
-    expect(next.ease).toBeCloseTo(2.38)
-    expect(next.dueAt).toBe('2026-06-16T12:00:00.000Z')
+    expect(next.intervalDays).toBe(2)
+    expect(next.ease).toBeCloseTo(2.05)
+    expect(next.dueAt).toBe('2026-06-15T12:00:00.000Z')
   })
 
   it('schedules ok reviews modestly and weak reviews soon', () => {
