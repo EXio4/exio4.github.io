@@ -21,7 +21,7 @@ const TIER_MAX_REPLAYS: Record<string, number> = {
 
 function replayLabel(t: { replay: string; replayCount: string }, max: number, used: number): string {
   if (max === Infinity) return t.replay
-  const left = max - used
+  const left = Math.max(0, max - used)
   return t.replayCount.replace('{n}', String(left))
 }
 
@@ -33,10 +33,14 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay, o
   const maxReplays = TIER_MAX_REPLAYS[tier] ?? 3
   const canReplay = replayCount < maxReplays
 
-  const [expertInput, setExpertInput] = useState('')
-  const [expertSubmitted, setExpertSubmitted] = useState(false)
-
   const roundKey = `${state.roundIndex}-${round.correct.syllableTone}`
+  const [expertState, setExpertState] = useState({
+    input: '',
+    roundKey,
+    submitted: false,
+  })
+  const expertInput = expertState.roundKey === roundKey ? expertState.input : ''
+  const expertSubmitted = expertState.roundKey === roundKey ? expertState.submitted : false
 
   const progressPct = state.totalRounds > 0
     ? ((state.roundIndex) / state.totalRounds) * 100
@@ -48,7 +52,7 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay, o
     if (!norm || norm.tone === 0) return
     const isCorrect = norm.base === round.correct.base && norm.tone === round.correct.tone
     const idx = isCorrect ? 0 : -1
-    setExpertSubmitted(true)
+    setExpertState({ input: expertInput, roundKey, submitted: true })
     onAnswer(idx)
   }
 
@@ -73,7 +77,7 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay, o
       <button
         className="tf-audio-btn"
         onClick={onReplay}
-        disabled={!canReplay && replayCount > 0}
+        disabled={!canReplay}
         aria-label={t.playAudio}
       >
         <span className="tf-audio-icon">🔊</span>
@@ -89,7 +93,7 @@ export function GameScreen({ state, feedback, replayCount, onAnswer, onReplay, o
             className="tf-expert-input"
             type="text"
             value={expertInput}
-            onChange={(e) => setExpertInput(e.target.value)}
+            onChange={(e) => setExpertState({ input: e.target.value, roundKey, submitted: expertSubmitted })}
             onKeyDown={handleExpertKeyDown}
             disabled={expertSubmitted || feedback !== null}
             placeholder={t.expertPlaceholder}
