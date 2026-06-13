@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const LANDSCAPE_QUERY = '(orientation: landscape) and (max-width: 1399px)'
 
@@ -27,6 +28,7 @@ export function RotationBlocker({ children }: { children: React.ReactNode }) {
             </svg>
             <h2>Rotate to Portrait</h2>
             <p>This app works best in portrait orientation. Please turn your device.</p>
+            <Link className="stroke-landscape-fallback" to="/apps/stroke/">Back to Dashboard</Link>
           </div>
         </div>
       )}

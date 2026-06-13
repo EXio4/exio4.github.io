@@ -772,3 +772,20 @@
   color: #fff;
   margin-bottom: 4px;
 }
+
+.stroke-landscape-fallback {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 10px 20px;
+  text-decoration: none;
+  transition: background 0.18s;
+}
+
+.stroke-landscape-fallback:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
