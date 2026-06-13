@@ -40,6 +40,13 @@ const APPS: App[] = [
     group: 'chinese',
   },
   {
+    slug: 'stroke',
+    name: 'Stroke',
+    description: 'Practice Chinese character stroke order with Apple Pencil-friendly tracing.',
+    emoji: '✍️',
+    group: 'chinese',
+  },
+  {
     slug: 'counter',
     name: 'Counter',
     description: 'A stateful counter with increment, decrement and reset.',

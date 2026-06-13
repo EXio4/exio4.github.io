@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ToneForgeConfig, Tier, InitialGroup } from './toneforge.ts'
-import { useT } from './LangContext.tsx'
+import { useT } from './LangContextCore.ts'
 import { LangSwitcher } from './LangContext.tsx'
 
 interface Props {

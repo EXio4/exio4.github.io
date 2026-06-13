@@ -6,11 +6,13 @@ import './App.css'
 const CounterApp = lazy(() => import('./apps/counter'))
 const MarkdownApp = lazy(() => import('./apps/markdown'))
 const ToneForgeApp = lazy(() => import('./apps/toneforge'))
+const StrokeApp = lazy(() => import('./apps/stroke'))
 
 import Home from './pages/Home.tsx'
 
 const APP_LABELS: Record<string, string> = {
   '/apps/toneforge': 'ToneForge',
+  '/apps/stroke': 'Stroke',
   '/apps/counter': 'Counter',
   '/apps/markdown': 'Markdown',
 }
@@ -43,6 +45,7 @@ function AppShell() {
             <Route path="/apps/counter/*" element={<CounterApp />} />
             <Route path="/apps/markdown/*" element={<MarkdownApp />} />
             <Route path="/apps/toneforge/*" element={<ToneForgeApp />} />
+            <Route path="/apps/stroke/*" element={<StrokeApp />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -1,5 +1,5 @@
 import type { ToneStats, ToneForgeConfig } from './toneforge.ts'
-import { useT } from './LangContext.tsx'
+import { useT } from './LangContextCore.ts'
 
 interface Props {
   stats: ToneStats

@@ -1,34 +1,13 @@
-import { createContext, useContext, useState, useCallback } from 'react'
-import { type Lang, type LocaleStrings, getLocale, LANGS, LANG_LABELS } from './locale.ts'
+import { useCallback, useState, type ReactNode } from 'react'
+import { type Lang, getLocale, LANGS, LANG_LABELS } from './locale.ts'
+import { LangContext, useT } from './LangContextCore.ts'
 
-interface LangCtx {
-  lang: Lang
-  t: LocaleStrings
-  setLang: (lang: Lang) => void
-}
-
-const LangContext = createContext<LangCtx>({
-  lang: 'en',
-  t: getLocale('en'),
-  setLang: () => {},
-})
-
-export function useT() {
-  return useContext(LangContext)
-}
-
-export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Lang>(() => {
-    try {
-      const stored = localStorage.getItem('toneforge-lang')
-      if (stored && LANGS.includes(stored as Lang)) return stored as Lang
-    } catch {}
-    return 'en'
-  })
+export function LangProvider({ children }: { children: ReactNode }) {
+  const [lang, setLang] = useState<Lang>(readStoredLang)
 
   const handleSetLang = useCallback((l: Lang) => {
     setLang(l)
-    try { localStorage.setItem('toneforge-lang', l) } catch {}
+    saveStoredLang(l)
   }, [])
 
   return (
@@ -53,4 +32,22 @@ export function LangSwitcher() {
       ))}
     </div>
   )
+}
+
+function readStoredLang(): Lang {
+  try {
+    const stored = localStorage.getItem('toneforge-lang')
+    if (stored && LANGS.includes(stored as Lang)) return stored as Lang
+  } catch {
+    return 'en'
+  }
+  return 'en'
+}
+
+function saveStoredLang(lang: Lang): void {
+  try {
+    localStorage.setItem('toneforge-lang', lang)
+  } catch {
+    return
+  }
 }

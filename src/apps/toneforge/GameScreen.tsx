@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ToneForgeState, SyllableEntry } from './toneforge.ts'
 import { normalize } from './pinyin.ts'
-import { useT } from './LangContext.tsx'
+import { useT } from './LangContextCore.ts'
 
 interface Props {
   state: ToneForgeState

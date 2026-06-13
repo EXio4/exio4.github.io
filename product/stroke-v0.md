@@ -1,4 +1,6 @@
-# Stroke
+# Stroke V0
+
+Original concept note. Superseded for V1 planning by `product/stroke-v1.md`.
 
 iPad web app for learning Chinese characters by tracing with Apple Pencil. Part of the `exio4.github.io` micro-frontend dashboard, lazy-loaded as a sub-app at `/apps/stroke`.
 
