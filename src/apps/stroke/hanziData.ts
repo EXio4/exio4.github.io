@@ -18,6 +18,63 @@ import shan from 'hanzi-writer-data/山.json'
 import mu from 'hanzi-writer-data/木.json'
 import da from 'hanzi-writer-data/大.json'
 import xiao from 'hanzi-writer-data/小.json'
+import wo from 'hanzi-writer-data/我.json'
+import ni from 'hanzi-writer-data/你.json'
+import nin from 'hanzi-writer-data/您.json'
+import ta from 'hanzi-writer-data/他.json'
+import tal from 'hanzi-writer-data/她.json'
+import taz from 'hanzi-writer-data/它.json'
+import men from 'hanzi-writer-data/们.json'
+import zi from 'hanzi-writer-data/子.json'
+import nv from 'hanzi-writer-data/女.json'
+import ba_ba from 'hanzi-writer-data/爸.json'
+import ma from 'hanzi-writer-data/妈.json'
+import ge from 'hanzi-writer-data/哥.json'
+import jie from 'hanzi-writer-data/姐.json'
+import di_di from 'hanzi-writer-data/弟.json'
+import mei from 'hanzi-writer-data/妹.json'
+import ye from 'hanzi-writer-data/爷.json'
+import nai from 'hanzi-writer-data/奶.json'
+import bai from 'hanzi-writer-data/白.json'
+import hei from 'hanzi-writer-data/黑.json'
+import hong from 'hanzi-writer-data/红.json'
+import huang from 'hanzi-writer-data/黄.json'
+import lan from 'hanzi-writer-data/蓝.json'
+import lv from 'hanzi-writer-data/绿.json'
+import shang from 'hanzi-writer-data/上.json'
+import xia from 'hanzi-writer-data/下.json'
+import zuo from 'hanzi-writer-data/左.json'
+import you from 'hanzi-writer-data/右.json'
+import chi from 'hanzi-writer-data/吃.json'
+import he from 'hanzi-writer-data/喝.json'
+import zou from 'hanzi-writer-data/走.json'
+import zuoz from 'hanzi-writer-data/坐.json'
+import kan from 'hanzi-writer-data/看.json'
+import ting from 'hanzi-writer-data/听.json'
+import shuo from 'hanzi-writer-data/说.json'
+import xue from 'hanzi-writer-data/学.json'
+import xie from 'hanzi-writer-data/写.json'
+import li from 'hanzi-writer-data/立.json'
+import mi from 'hanzi-writer-data/米.json'
+import mian from 'hanzi-writer-data/面.json'
+import cai from 'hanzi-writer-data/菜.json'
+import guo from 'hanzi-writer-data/果.json'
+import cha from 'hanzi-writer-data/茶.json'
+import jiu_jiu from 'hanzi-writer-data/酒.json'
+import rou from 'hanzi-writer-data/肉.json'
+import dan from 'hanzi-writer-data/蛋.json'
+import yu from 'hanzi-writer-data/鱼.json'
+import niu from 'hanzi-writer-data/牛.json'
+import tian from 'hanzi-writer-data/天.json'
+import di from 'hanzi-writer-data/地.json'
+import feng from 'hanzi-writer-data/风.json'
+import yun from 'hanzi-writer-data/云.json'
+import yuz from 'hanzi-writer-data/雨.json'
+import hua from 'hanzi-writer-data/花.json'
+import cao from 'hanzi-writer-data/草.json'
+import tuz from 'hanzi-writer-data/土.json'
+import shiz from 'hanzi-writer-data/石.json'
+import jin from 'hanzi-writer-data/金.json'
 import type { HanziWriterCharacterData } from './types.ts'
 
 export const HANZI_DATA: Record<string, HanziWriterCharacterData> = {
@@ -41,6 +98,63 @@ export const HANZI_DATA: Record<string, HanziWriterCharacterData> = {
   木: mu,
   大: da,
   小: xiao,
+  我: wo,
+  你: ni,
+  您: nin,
+  他: ta,
+  她: tal,
+  它: taz,
+  们: men,
+  子: zi,
+  女: nv,
+  爸: ba_ba,
+  妈: ma,
+  哥: ge,
+  姐: jie,
+  弟: di_di,
+  妹: mei,
+  爷: ye,
+  奶: nai,
+  白: bai,
+  黑: hei,
+  红: hong,
+  黄: huang,
+  蓝: lan,
+  绿: lv,
+  上: shang,
+  下: xia,
+  左: zuo,
+  右: you,
+  吃: chi,
+  喝: he,
+  走: zou,
+  坐: zuoz,
+  看: kan,
+  听: ting,
+  说: shuo,
+  学: xue,
+  写: xie,
+  立: li,
+  米: mi,
+  面: mian,
+  菜: cai,
+  果: guo,
+  茶: cha,
+  酒: jiu_jiu,
+  肉: rou,
+  蛋: dan,
+  鱼: yu,
+  牛: niu,
+  天: tian,
+  地: di,
+  风: feng,
+  云: yun,
+  雨: yuz,
+  花: hua,
+  草: cao,
+  土: tuz,
+  石: shiz,
+  金: jin,
 }
 
 export function getHanziData(character: string): HanziWriterCharacterData {
