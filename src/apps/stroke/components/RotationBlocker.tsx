@@ -28,7 +28,7 @@ export function RotationBlocker({ children }: { children: React.ReactNode }) {
             </svg>
             <h2>Rotate to Portrait</h2>
             <p>This app works best in portrait orientation. Please turn your device.</p>
-            <Link className="stroke-landscape-fallback" to="/apps/stroke/">Back to Dashboard</Link>
+            <Link className="stroke-landscape-fallback" to="/">Back to Home</Link>
           </div>
         </div>
       )}
