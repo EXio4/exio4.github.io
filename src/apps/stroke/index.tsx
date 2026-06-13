@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { DeckView } from './components/DeckView.tsx'
+import { RotationBlocker } from './components/RotationBlocker.tsx'
 import { PracticeView } from './components/PracticeView.tsx'
 import { ReviewView } from './components/ReviewView.tsx'
 import { StrokeDashboard } from './components/StrokeDashboard.tsx'
@@ -95,30 +96,32 @@ export default function StrokeApp() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<StrokeDashboard progress={progress} settings={settings} />} />
-      <Route path="/decks/:deckId" element={<DeckView progress={progress} />} />
-      <Route path="/review" element={<ReviewView progress={progress} />} />
-      <Route
-        path="/practice/:deckId/:character"
-        element={
-          <PracticeView
-            progress={progress}
-            settings={settings}
-            onSaveAttempt={handleSaveAttempt}
-          />
-        }
-      />
-      <Route
-        path="*"
-        element={
-          <div className="stroke-message">
-            <h1>Stroke page not found</h1>
-            <p>That route is not part of the writing trainer.</p>
-          </div>
-        }
-      />
-    </Routes>
+    <RotationBlocker>
+      <Routes>
+        <Route path="/" element={<StrokeDashboard progress={progress} settings={settings} />} />
+        <Route path="/decks/:deckId" element={<DeckView progress={progress} />} />
+        <Route path="/review" element={<ReviewView progress={progress} />} />
+        <Route
+          path="/practice/:deckId/:character"
+          element={
+            <PracticeView
+              progress={progress}
+              settings={settings}
+              onSaveAttempt={handleSaveAttempt}
+            />
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <div className="stroke-message">
+              <h1>Stroke page not found</h1>
+              <p>That route is not part of the writing trainer.</p>
+            </div>
+          }
+        />
+      </Routes>
+    </RotationBlocker>
   )
 }
 
