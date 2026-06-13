@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CHARACTERS, DECKS, getDeckCharacters } from '../content.ts'
-import { getDueCharacters } from '../srs.ts'
+import { buildDashboardSummary, buildDeckSummary } from '../session.ts'
 import type { CharacterProgress, StrokeSettings } from '../types.ts'
 
 interface Props {
@@ -10,9 +10,7 @@ interface Props {
 
 export function StrokeDashboard({ progress, settings }: Props) {
   const now = new Date().toISOString()
-  const due = getDueCharacters(progress, now)
-  const practicedToday = progress.filter((entry) => isToday(entry.lastPracticedAt)).length
-  const graduated = progress.filter((entry) => entry.bestStars === 3).length
+  const summary = buildDashboardSummary(progress, settings.dailyGoal, now)
 
   return (
     <div className="stroke-page">
@@ -26,19 +24,43 @@ export function StrokeDashboard({ progress, settings }: Props) {
         </Link>
       </header>
 
+      <section className="stroke-today-panel">
+        <div className="stroke-today-copy">
+          <p className="stroke-kicker">Today's Path</p>
+          <h2>{summary.recommendation.label}</h2>
+          <p>{summary.recommendation.detail}</p>
+          <Link className="stroke-primary-btn" to={summary.recommendation.to}>
+            Begin
+          </Link>
+        </div>
+
+        <div className="stroke-next-strip" aria-label="Next characters">
+          {summary.nextCharacters.map((entry) => (
+            <Link
+              key={entry.character}
+              className="stroke-next-chip"
+              to={`/apps/stroke/practice/${entry.deckIds[0]}/${entry.character}`}
+            >
+              <span>{entry.character}</span>
+              <small>{entry.pinyinMarked}</small>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="stroke-review-band">
         <div>
-          <span className="stroke-review-count">{due.length}</span>
+          <span className="stroke-review-count">{summary.dueCount}</span>
           <div>
-            <h2>Due today</h2>
+            <h2>Memory Queue</h2>
             <p>
-              {due.length > 0
+              {summary.dueCount > 0
                 ? 'Your review queue is ready.'
-                : 'Nothing due right now. Pick a deck to keep warming up.'}
+                : `${summary.newCount} new characters are still untouched.`}
             </p>
           </div>
         </div>
-        {due.length > 0 && (
+        {summary.dueCount > 0 && (
           <Link className="stroke-primary-btn" to="/apps/stroke/review">
             Start Review
           </Link>
@@ -47,11 +69,14 @@ export function StrokeDashboard({ progress, settings }: Props) {
 
       <section className="stroke-stat-row" aria-label="Progress summary">
         <div>
-          <span>{practicedToday}</span>
+          <span>{summary.goalCompleted}</span>
           <p>Today / {settings.dailyGoal}</p>
+          <div className="stroke-mini-meter" aria-label={`${summary.goalPercent}% of daily goal`}>
+            <span style={{ width: `${summary.goalPercent}%` }} />
+          </div>
         </div>
         <div>
-          <span>{graduated}</span>
+          <span>{summary.graduated}</span>
           <p>Graduated</p>
         </div>
         <div>
@@ -68,18 +93,27 @@ export function StrokeDashboard({ progress, settings }: Props) {
         <div className="stroke-deck-grid">
           {DECKS.map((deck) => {
             const characters = getDeckCharacters(deck.id)
-            const summary = summarizeDeck(characters.map((entry) => entry.character), progress)
+            const deckSummary = buildDeckSummary(
+              characters.map((entry) => entry.character),
+              progress,
+              now,
+            )
+            const nextCharacter = characters.find((entry) => entry.character === deckSummary.nextCharacter)
             return (
               <Link key={deck.id} className="stroke-deck-card" to={`/apps/stroke/decks/${deck.id}`}>
                 <div>
                   <h3>{deck.name}</h3>
                   <p>{deck.description}</p>
                 </div>
-                <div className="stroke-progress-bar" aria-label={`${summary.percent}% complete`}>
-                  <span style={{ width: `${summary.percent}%` }} />
+                <div className="stroke-deck-focus">
+                  <span>Next</span>
+                  <strong>{nextCharacter ? `${nextCharacter.character} ${nextCharacter.pinyinMarked}` : 'Done'}</strong>
+                </div>
+                <div className="stroke-progress-bar" aria-label={`${deckSummary.percent}% complete`}>
+                  <span style={{ width: `${deckSummary.percent}%` }} />
                 </div>
                 <p className="stroke-deck-meta">
-                  {summary.graduated}/{characters.length} at 3 stars
+                  {deckSummary.due} due · {deckSummary.newCount} new · {deckSummary.graduated}/{characters.length} at 3 stars
                 </p>
               </Link>
             )
@@ -88,18 +122,4 @@ export function StrokeDashboard({ progress, settings }: Props) {
       </section>
     </div>
   )
-}
-
-function summarizeDeck(characters: string[], progress: CharacterProgress[]) {
-  const progressByCharacter = new Map(progress.map((entry) => [entry.character, entry]))
-  const graduated = characters.filter((character) => progressByCharacter.get(character)?.bestStars === 3).length
-  return {
-    graduated,
-    percent: Math.round((graduated / characters.length) * 100),
-  }
-}
-
-function isToday(value?: string): boolean {
-  if (!value) return false
-  return new Date(value).toDateString() === new Date().toDateString()
 }

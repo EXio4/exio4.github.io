@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { getDeck, getDeckCharacters } from '../content.ts'
 import { getPracticeQueue } from '../srs.ts'
+import { buildDeckSummary } from '../session.ts'
 import type { CharacterProgress } from '../types.ts'
 
 interface Props {
@@ -21,6 +22,7 @@ export function DeckView({ progress }: Props) {
     progress,
     new Date().toISOString(),
   )
+  const summary = buildDeckSummary(characters.map((entry) => entry.character), progress)
   const first = queue[0] ?? characters[0]?.character
   const progressByCharacter = new Map(progress.map((entry) => [entry.character, entry]))
 
@@ -38,6 +40,11 @@ export function DeckView({ progress }: Props) {
       </header>
 
       <div className="stroke-action-row">
+        <div className="stroke-deck-summary">
+          <span>{summary.due} due</span>
+          <span>{summary.newCount} new</span>
+          <span>{summary.graduated}/{characters.length} graduated</span>
+        </div>
         <Link className="stroke-primary-btn" to={`/apps/stroke/practice/${deck.id}/${first}`}>
           Start Practice
         </Link>
@@ -55,6 +62,7 @@ export function DeckView({ progress }: Props) {
               <span className="stroke-tile-glyph">{entry.character}</span>
               <span>{entry.pinyinMarked}</span>
               <span>{renderStars(itemProgress?.bestStars ?? 0)}</span>
+              <small>{getCharacterStatus(itemProgress)}</small>
             </Link>
           )
         })}
@@ -77,4 +85,11 @@ export function StrokeAppMessage({ title, body }: { title: string; body: string 
 
 function renderStars(stars: number): string {
   return stars > 0 ? `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}` : 'New'
+}
+
+function getCharacterStatus(progress?: CharacterProgress): string {
+  if (!progress) return 'Untouched'
+  if (new Date(progress.dueAt).getTime() <= Date.now()) return 'Due now'
+  if (progress.bestStars === 3) return 'Graduated'
+  return 'Scheduled'
 }
